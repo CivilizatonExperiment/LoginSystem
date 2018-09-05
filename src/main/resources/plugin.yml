@@ -1,0 +1,34 @@
+name: LoginQueue
+main: io.civex.LoginSystem.LoginQueue
+version: 1.0
+author: ryan00793
+description: QueuePlugin.
+commands:
+  queue:
+    description: Queue Command.
+    aliases: [q]
+permissions:
+  civex.queue.reload:
+    default: op
+    description: Allows config reload.
+  civex.queue.stopQueue:
+    default: op
+    description: Allows the changing of queue state.
+  civex.queue.bypass:
+    default: op
+    description: Allows the bypassing of the queue.
+  civex.queue.restart:
+    default: op
+    description: Allows the restart of the queue.
+  civex.queue.remove:
+    default: op
+    description: Allows the removal of a player from the queue.
+  civex.queue.*:
+    default: op
+    dexcription: Wildcard permission for admins
+    children:
+      civex.queue.reload: true
+      civex.queue.stopQueue: true
+      civex.queue.bypass: true
+      civex.queue.restart: true
+      civex.queue.remove: true

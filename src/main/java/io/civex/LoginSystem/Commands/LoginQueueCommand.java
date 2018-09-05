@@ -1,6 +1,6 @@
 package io.civex.LoginSystem.Commands;
 
-import io.civex.LoginSystem.LoginSystemPlugin;
+import io.civex.LoginSystem.LoginQueue;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,11 +12,11 @@ import java.util.UUID;
 /**
  * Created by Ryan on 5/16/2017.
  */
-public class loginQueueCommand implements CommandExecutor
+public class LoginQueueCommand implements CommandExecutor
 {
-    LoginSystemPlugin plugin;
+    LoginQueue plugin;
 
-    public loginQueueCommand(LoginSystemPlugin plugin)
+    public LoginQueueCommand(LoginQueue plugin)
     {
         this.plugin = plugin;
     }
@@ -34,10 +34,22 @@ public class loginQueueCommand implements CommandExecutor
                 return true;
             }
 
+            if (args[0].equalsIgnoreCase("reload"))
+            {
+                if (!player.hasPermission("civex.queue.reload"))
+                {
+                    sendNoPermission(player);
+                    return true;
+                }
+
+                plugin.reloadConfig();
+                return true;
+            }
+
             //This is to stop people from logging in (usually for debug when making changes to this plugin)
             if (args[0].equalsIgnoreCase("stop"))
             {
-                if (!player.hasPermission("civex.queue.stopQueue") || !player.isOp())
+                if (!player.hasPermission("civex.queue.stopQueue"))
                 {
                     sendNoPermission(player);
                     return true;
@@ -50,7 +62,7 @@ public class loginQueueCommand implements CommandExecutor
 
             if (args[0].equalsIgnoreCase("start"))
             {
-                if (!player.hasPermission("civex.queue.stopQueue") || !player.isOp())
+                if (!player.hasPermission("civex.queue.stopQueue"))
                 {
                     sendNoPermission(player);
                     return true;
@@ -63,7 +75,7 @@ public class loginQueueCommand implements CommandExecutor
 
             if (args[0].equalsIgnoreCase("toggle"))
             {
-                if (!player.hasPermission("civex.queue.stopQueue") || !player.isOp())
+                if (!player.hasPermission("civex.queue.stopQueue"))
                 {
                     sendNoPermission(player);
                     return true;
@@ -76,7 +88,7 @@ public class loginQueueCommand implements CommandExecutor
 
             if (args[0].equalsIgnoreCase("reset"))
             {
-                if (!player.hasPermission("civex.queue.restart") || !player.isOp())
+                if (!player.hasPermission("civex.queue.restart"))
                 {
                     sendNoPermission(player);
                     return true;
@@ -89,7 +101,7 @@ public class loginQueueCommand implements CommandExecutor
 
             if (args[0].equalsIgnoreCase("remove"))
             {
-                if (!player.hasPermission("civex.queue.remove") || !player.isOp())
+                if (!player.hasPermission("civex.queue.remove"))
                 {
                     sendNoPermission(player);
                     return true;
@@ -158,15 +170,15 @@ public class loginQueueCommand implements CommandExecutor
         {
             if (highPos > 1)
             {
-                player.sendMessage(ChatColor.AQUA + "The are [" + highPos + "] people waiting. There are [" + slots + "] slots [" + playerCount + "/" + maxCount + "]");
+                player.sendMessage(ChatColor.AQUA + "There are [" + highPos + "] people waiting. There are [" + slots + "] slots [" + playerCount + "/" + maxCount + "]");
             }
             else
             {
-                player.sendMessage(ChatColor.AQUA + "The is [" + highPos + "] person waiting. There are [" + slots + "] slots. [" + playerCount + "/" + maxCount + "]");
+                player.sendMessage(ChatColor.AQUA + "There is [" + highPos + "] person waiting. There are [" + slots + "] slots. [" + playerCount + "/" + maxCount + "]");
             }
 
 
-            if (plugin.showedPlayersInStatus > 0)
+            if (plugin.getConfig().getInt("view-size", 5) > 0)
             {
                 for (int i = 1; i <= 5; i++)
                 {
