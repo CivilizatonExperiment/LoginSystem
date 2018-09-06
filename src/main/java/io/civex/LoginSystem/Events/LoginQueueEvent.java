@@ -55,7 +55,7 @@ public class LoginQueueEvent extends Event
         return pName;
     }
 
-    public HashBiMap getQueue()
+    public HashBiMap<UUID, Integer> getQueue()
     {
         return queue;
     }
@@ -65,7 +65,7 @@ public class LoginQueueEvent extends Event
         return onTheClock;
     }
 
-    public HashMap getUUIDtoName()
+    public HashMap<UUID, String> getUUIDtoName()
     {
         return uuidToName;
     }
