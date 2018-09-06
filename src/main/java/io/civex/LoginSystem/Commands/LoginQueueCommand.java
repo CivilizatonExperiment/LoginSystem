@@ -122,7 +122,7 @@ public class LoginQueueCommand implements CommandExecutor
 
                     if (personToRemove > 0)
                     {
-                        plugin.removeUserAtPos(personToRemove);
+                        plugin.removeUserAtPos(personToRemove, true);
                         player.sendMessage(ChatColor.AQUA + "You have removed [" + ChatColor.WHITE +
                                 plugin.getNameFromUUID(plugin.getUserInPosition(personToRemove)) + ChatColor.AQUA +
                                 "][pos" + ChatColor.WHITE + personToRemove + ChatColor.AQUA + "] from the queue.");

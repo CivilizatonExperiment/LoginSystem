@@ -132,7 +132,7 @@ public class LoginQueue extends JavaPlugin
 
     }
 
-    public synchronized void removeUserAtPos(int personBeingRemoved)
+    public synchronized void removeUserAtPos(int personBeingRemoved, boolean failedQueue)
     {
         HashBiMap<UUID, Integer> newMap = HashBiMap.create();
         UUID p = loginQueue.inverse().get(personBeingRemoved);
@@ -160,7 +160,7 @@ public class LoginQueue extends JavaPlugin
         highestQueuePos--;
         loginQueue = newMap;
 
-        callEvent(new LoginQueueEvent("", EventType.REMOVEFROMQUEUE, p, name, loginQueue, onTheClock, uuidToName));
+        if(failedQueue) callEvent(new LoginQueueEvent("", EventType.REMOVEFROMQUEUE, p, name, loginQueue, onTheClock, uuidToName));
     }
 
     public synchronized int getHighestQueuePos()

@@ -29,7 +29,7 @@ public class Join implements Listener
 
         if (queuePos > 0)
         {
-            plugin.removeUserAtPos(queuePos);
+            plugin.removeUserAtPos(queuePos, false);
         }
 
         plugin.checkIfUsersShouldBeOnClock(0);
