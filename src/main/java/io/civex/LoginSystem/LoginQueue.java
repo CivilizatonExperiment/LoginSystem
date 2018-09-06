@@ -2,12 +2,16 @@ package io.civex.LoginSystem;
 
 import com.google.common.collect.HashBiMap;
 import io.civex.LoginSystem.Commands.LoginQueueCommand;
+import io.civex.LoginSystem.Events.Enums.EventType;
+import io.civex.LoginSystem.Events.LoginQueueEvent;
 import io.civex.LoginSystem.Listeners.Join;
 import io.civex.LoginSystem.Listeners.Logout;
 import io.civex.LoginSystem.Listeners.Login;
 import io.civex.LoginSystem.Utils.LoginTimeRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -53,12 +57,14 @@ public class LoginQueue extends JavaPlugin
 
     }
 
-    public void loadConfig() {
+    public void loadConfig()
+    {
         config = Bukkit.getPluginManager().getPlugin("LoginQueue").getConfig();
     }
 
     @Override
-    public void reloadConfig() {
+    public void reloadConfig()
+    {
         super.reloadConfig();
         loadConfig();
     }
@@ -105,10 +111,12 @@ public class LoginQueue extends JavaPlugin
             loginQueue.put(p, ++highestQueuePos);
         }
 
-        if (!uuidToName.containsKey(name))
+        if (!uuidToName.containsKey(p))
         {
             uuidToName.put(p, name);
         }
+
+        callEvent(new LoginQueueEvent("", EventType.JOINQUEUE, p, name, loginQueue, onTheClock, uuidToName));
     }
 
     public synchronized UUID getUserInPosition(int pos)
@@ -128,6 +136,7 @@ public class LoginQueue extends JavaPlugin
     {
         HashBiMap<UUID, Integer> newMap = HashBiMap.create();
         UUID p = loginQueue.inverse().get(personBeingRemoved);
+        String name = getNameFromUUID(p);
         loginQueue.inverse().remove(personBeingRemoved);
         uuidToName.remove(p);
 
@@ -150,6 +159,8 @@ public class LoginQueue extends JavaPlugin
 
         highestQueuePos--;
         loginQueue = newMap;
+
+        callEvent(new LoginQueueEvent("", EventType.REMOVEFROMQUEUE, p, name, loginQueue, onTheClock, uuidToName));
     }
 
     public synchronized int getHighestQueuePos()
@@ -157,7 +168,7 @@ public class LoginQueue extends JavaPlugin
         return highestQueuePos;
     }
 
-    public void addUserToOnTheClock(UUID p)
+    private void addUserToOnTheClock(UUID p)
     {
         if (!onTheClock.contains(p))
         {
@@ -214,7 +225,19 @@ public class LoginQueue extends JavaPlugin
         if (!isOnTheClock(p))
         {
             addUserToOnTheClock(p);
+            callEvent(new LoginQueueEvent("", EventType.ONCLOCK, p, getNameFromUUID(p), loginQueue, onTheClock, uuidToName));
+
             new LoginTimeRunnable(this, p).runTaskLater(this, config.getInt("connection-time", 30) * 19L);
         }
+    }
+
+    public void playerLoggedIn(Player p)
+    {
+        callEvent(new LoginQueueEvent("", EventType.JOIN, p.getUniqueId(), p.getName(), loginQueue, onTheClock, uuidToName));
+}
+
+    private void callEvent(LoginQueueEvent event)
+    {
+        this.getServer().getPluginManager().callEvent(event);
     }
 }

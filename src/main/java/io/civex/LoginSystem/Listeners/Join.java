@@ -1,5 +1,7 @@
 package io.civex.LoginSystem.Listeners;
 
+import io.civex.LoginSystem.Events.Enums.EventType;
+import io.civex.LoginSystem.Events.LoginQueueEvent;
 import io.civex.LoginSystem.LoginQueue;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,5 +33,6 @@ public class Join implements Listener
         }
 
         plugin.checkIfUsersShouldBeOnClock(0);
+        plugin.playerLoggedIn(p);
     }
 }
