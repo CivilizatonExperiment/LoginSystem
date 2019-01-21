@@ -32,8 +32,9 @@ public class Login implements Listener
             availableSlots = 0;
         }
 
-        // If user is on the clock, we know they should be able to log in, even if someone bypassed the queue
+        // If user is on the clock, always let them log in
         if (plugin.isOnTheClock(event.getPlayer().getUniqueId())) {
+            event.allow();
             return;
         }
 
